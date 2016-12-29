@@ -6,6 +6,7 @@ import "github.com/ishiikurisu/moneylog"
 func main() {
     var running bool = true
     var option int = 0
+    var log *moneylog.Log = nil
 
     for running {
         menu()
@@ -14,7 +15,7 @@ func main() {
         if option == 0 {
             running = false
         } else if option == 1 {
-            createEntry()
+            log = createEntry(log)
         }
     }
 }
@@ -27,7 +28,7 @@ func menu() {
     fmt.Println("Choose an option:")
 }
 
-func createEntry() {
+func createEntry(log *moneylog.Log) *moneylog.Log {
     var description string
     var value float64
 
@@ -35,6 +36,13 @@ func createEntry() {
     fmt.Scanln(&description)
     fmt.Println("Value:")
     fmt.Scanln(&value)
-    entry := moneylog.NewEntry(description, value)
-    fmt.Printf("%#v\n", entry)
+
+    if log == nil {
+        l := moneylog.StartLog(description, value)
+        log = &l
+    } else {
+        log.Add(description, value)
+    }
+
+    return log
 }
