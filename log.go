@@ -1,9 +1,14 @@
 package moneylog
 
 import "fmt"
+import "strings"
 
 type Log struct {
     Entries []Entry
+}
+
+func EmptyLog() Log {
+    return Log{Entries: make([]Entry, 0)}
 }
 
 func NewLog(first Entry) Log {
@@ -43,6 +48,20 @@ func (log *Log) ToString() string {
 }
 
 // TODO Log from string
+func LogFromString(raw string) Log {
+    inlet := strings.Split(raw, "\n")
+    log := EmptyLog()
+
+    for _, line := range inlet {
+        if line == "---" || line == "..."  {
+
+        } else if len(line) > 0 {
+            log.Insert(EntryFromString(line))
+        }
+    }
+
+    return log
+}
 
 // TODO Get balance
 func (log *Log) CalculateBalance() float64 {

@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 import "github.com/ishiikurisu/moneylog"
+import "io/ioutil"
 
 func main() {
     var running bool = true
@@ -20,6 +21,8 @@ func main() {
             fmt.Printf("%s\n", log.ToString())
         } else if option == 3 {
             fmt.Printf("Your balance is $%.2f\n", log.CalculateBalance())
+        } else if option == 4 {
+            log = load()
         }
     }
 }
@@ -50,4 +53,20 @@ func createEntry(log *moneylog.Log) *moneylog.Log {
     }
 
     return log
+}
+
+func load() *moneylog.Log {
+    var path string
+
+    fmt.Println("Write path to file:")
+    fmt.Scanln(&path)
+
+    content, err := ioutil.ReadFile(path)
+    if err != nil {
+        panic(err)
+    }
+
+    fmt.Printf("%s\n", string(content))
+    l := moneylog.LogFromString(string(content))
+    return &l
 }
