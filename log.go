@@ -41,3 +41,16 @@ func (log *Log) ToString() string {
 
     return fmt.Sprintf("%s...\n", outlet)
 }
+
+// TODO Log from string
+
+// TODO Get balance
+func (log *Log) CalculateBalance() float64 {
+    var outlet float64 = 0
+
+    for _, entry := range log.Entries {
+        outlet += entry.Value
+    }
+
+    return outlet
+}

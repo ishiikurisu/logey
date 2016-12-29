@@ -18,6 +18,8 @@ func main() {
             log = createEntry(log)
         } else if option == 2 {
             fmt.Printf("%s\n", log.ToString())
+        } else if option == 3 {
+            fmt.Printf("Your balance is $%.2f\n", log.CalculateBalance())
         }
     }
 }
@@ -27,6 +29,7 @@ func menu() {
     fmt.Println("0. EXIT")
     fmt.Println("1. ADD ENTRY")
     fmt.Println("2. SHOW ENTRIES")
+    fmt.Println("3. GET BALANCE")
     fmt.Println("Choose an option:")
 }
 
@@ -35,7 +38,7 @@ func createEntry(log *moneylog.Log) *moneylog.Log {
     var value float64
 
     fmt.Println("Description:")
-    fmt.Scanln(&description)
+    fmt.Scanf("%s\n", &description)
     fmt.Println("Value:")
     fmt.Scanln(&value)
 
