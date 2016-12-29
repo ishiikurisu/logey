@@ -1,5 +1,7 @@
 package moneylog
 
+import "fmt"
+
 type Log struct {
     Entries []Entry
 }
@@ -28,4 +30,14 @@ func (log *Log) Insert(entry Entry) {
 
 func (log *Log) Add(description string, value float64) {
     log.Insert(NewEntry(description, value))
+}
+
+func (log *Log) ToString() string {
+    outlet := "---\n"
+
+    for _, entry := range log.Entries {
+        outlet += fmt.Sprintf("%s: %.2f\n", entry.Description, entry.Value)
+    }
+
+    return fmt.Sprintf("%s...\n", outlet)
 }

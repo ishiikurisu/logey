@@ -16,6 +16,8 @@ func main() {
             running = false
         } else if option == 1 {
             log = createEntry(log)
+        } else if option == 2 {
+            fmt.Printf("%s\n", log.ToString())
         }
     }
 }
