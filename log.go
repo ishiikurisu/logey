@@ -1,26 +1,36 @@
+/*
+This package implements the fundamental 
+*/
+
 package moneylog
 
 import "fmt"
 import "strings"
 
+// Defines the log data structure
 type Log struct {
+    // Is an array of entry objects
     Entries []Entry
 }
 
+// Creates an empty log without entries
 func EmptyLog() Log {
     return Log{Entries: make([]Entry, 0)}
 }
 
+// Starts the log with a first entry
 func NewLog(first Entry) Log {
     log := Log{Entries: make([]Entry, 1)}
     log.Entries[0] = first
     return log
 }
 
+// Starts the log with a first entry, describing its description and its value
 func StartLog(description string, value float64) Log {
     return NewLog(NewEntry(description, value))
 }
 
+// Adds an entry to a log
 func (log *Log) Insert(entry Entry) {
     limit := 1 + len(log.Entries)
     newEntries := make([]Entry, limit)
@@ -33,10 +43,12 @@ func (log *Log) Insert(entry Entry) {
     log.Entries = newEntries
 }
 
+// Adds an entry to a log
 func (log *Log) Add(description string, value float64) {
     log.Insert(NewEntry(description, value))
 }
 
+// Turns a log into a YAML string
 func (log *Log) ToString() string {
     outlet := "---\n"
 
@@ -47,7 +59,7 @@ func (log *Log) ToString() string {
     return fmt.Sprintf("%s...\n", outlet)
 }
 
-// TODO Log from string
+// Loads a log from a YAML string
 func LogFromString(raw string) Log {
     inlet := strings.Split(raw, "\n")
     log := EmptyLog()
@@ -63,7 +75,7 @@ func LogFromString(raw string) Log {
     return log
 }
 
-// TODO Get balance
+// Calculates the current log balance
 func (log *Log) CalculateBalance() float64 {
     var outlet float64 = 0
 
