@@ -1,5 +1,5 @@
 /*
-This package implements the fundamental 
+This package implements the fundamental
 */
 
 package moneylog
@@ -32,15 +32,7 @@ func StartLog(description string, value float64) Log {
 
 // Adds an entry to a log
 func (log *Log) Insert(entry Entry) {
-    limit := 1 + len(log.Entries)
-    newEntries := make([]Entry, limit)
-
-    for i := 0; i < limit - 1; i++ {
-        newEntries[i] = log.Entries[i]
-    }
-    newEntries[limit-1] = entry
-
-    log.Entries = newEntries
+    log.Entries = append(log.Entries, entry)
 }
 
 // Adds an entry to a log
