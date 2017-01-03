@@ -13,6 +13,10 @@ type Log struct {
     Entries []Entry
 }
 
+func GetSeparator() string {
+    return ","
+}
+
 // Creates an empty log without entries
 func EmptyLog() Log {
     return Log{Entries: make([]Entry, 0)}
@@ -43,25 +47,26 @@ func (log *Log) Add(description string, value float64) {
 // TODO: Change string standard for money log. I can't store a cookie like that.
 // Turns a log into a YAML string
 func (log *Log) ToString() string {
-    outlet := "---\n"
+    sep := GetSeparator()
+    outlet := "---" + sep
 
     for _, entry := range log.Entries {
-        outlet += fmt.Sprintf("%s: %.2f\n", entry.Description, entry.Value)
+        outlet += fmt.Sprintf("%s: %.2f", entry.Description, entry.Value) + sep
     }
 
-    return fmt.Sprintf("%s...\n", outlet)
+    return fmt.Sprintf("%s...", outlet) + sep
 }
 
 // Loads a log from a YAML string
 func LogFromString(raw string) Log {
-    inlet := strings.Split(raw, "\n")
+    inlet := strings.Split(raw, GetSeparator())
     log := EmptyLog()
 
-    for _, line := range inlet {
-        if line == "---" || line == "..."  {
+    for _, field := range inlet {
+        if field == "---" || field == "..."  {
 
-        } else if len(line) > 0 {
-            log.Insert(EntryFromString(line))
+        } else if len(field) > 0 {
+            log.Insert(EntryFromString(field))
         }
     }
 
