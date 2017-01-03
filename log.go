@@ -40,6 +40,7 @@ func (log *Log) Add(description string, value float64) {
     log.Insert(NewEntry(description, value))
 }
 
+// TODO: Change string standard for money log. I can't store a cookie like that.
 // Turns a log into a YAML string
 func (log *Log) ToString() string {
     outlet := "---\n"
