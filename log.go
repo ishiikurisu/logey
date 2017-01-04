@@ -62,6 +62,10 @@ func LogFromString(raw string) Log {
     inlet := strings.Split(raw, GetSeparator())
     log := EmptyLog()
 
+    if len(raw) {
+        return log
+    }
+
     for _, field := range inlet {
         if field == "---" || field == "..."  {
 
@@ -82,4 +86,28 @@ func (log *Log) CalculateBalance() float64 {
     }
 
     return outlet
+}
+
+// Gets all descriptions
+func (log *Log) GetDescriptions() []string {
+    limit := len(log.Entries)
+    descriptions := make([]string, limit)
+
+    for i, entry := range log.Entries {
+        descriptions[i] = entry.Description
+    }
+
+    return descriptions
+}
+
+// Gets all values
+func (log *Log) GetValues() []float64 {
+    limit := len(log.Entries)
+    values := make([]float64, limit)
+
+    for i, entry := range log.Entries {
+        values[i] = entry.Value
+    }
+
+    return values
 }
