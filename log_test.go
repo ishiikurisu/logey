@@ -37,4 +37,16 @@ func TestCanImportAndExportLogs(t *testing.T) {
     if expected != result {
         t.Error("Could not export log to string")
     }
+
+    importedLog := Import(expected)
+    for i, entry := range log.Entries {
+        importedEntry := importedLog.Entries[i]
+        equalEntries := importedEntry.How == entry.How &&
+                        importedEntry.HowMuch == entry.HowMuch &&
+                        compareLists(importedEntry.Where, entry.Where) &&
+                        importedEntry.When == entry.When
+        if !equalEntries {
+            t.Error("Found different entries")
+        }
+    }
 }

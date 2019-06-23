@@ -2,6 +2,7 @@ package logey
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -42,4 +43,25 @@ func (log Log) Export() string {
 	}
 
 	return outlet
+}
+
+// Loads a log from a JSON lines table
+func Import(input string) *Log {
+	log := NewLog()
+	inlet := strings.Split(input, "\n")
+	firstLine := true
+
+	for _, line := range inlet {
+		if firstLine {
+			firstLine = false
+		} else if len(line) > 0 {
+			entry, oops := LoadEntryFromString(line)
+			if oops != nil {
+				panic(oops)
+			}
+			log.AddEntry(entry)
+		}
+	}
+
+	return log
 }
