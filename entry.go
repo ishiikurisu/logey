@@ -54,3 +54,7 @@ func (entry Entry) ToString() string {
 		when,
 	)
 }
+
+func LoadEntryFromString(inlet string) Entry {
+	return NewEntry("nope", 0, []string{"tag"}, time.Now())
+}
