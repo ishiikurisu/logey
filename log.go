@@ -1,6 +1,7 @@
 package logey
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -30,4 +31,15 @@ func (log *Log) AddEntry(entry Entry) {
 func (log *Log) DescribeEntry(how string, howMuch float64, where []string, when time.Time) {
 	entry := NewEntry(how, howMuch, where, when)
 	log.AddEntry(entry)
+}
+
+// Turns a log into a JSON lines table
+func (log Log) Export() string {
+	outlet := fmt.Sprintf("%s\n", GetEntryFormat())
+
+	for _, entry := range log.Entries {
+		outlet = fmt.Sprintf("%s%s\n", outlet, entry.ToString())
+	}
+
+	return outlet
 }
