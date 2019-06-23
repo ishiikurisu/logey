@@ -19,7 +19,12 @@ func TestIfEntryCanBeParsedAsString(t *testing.T) {
         t.Error(fmt.Sprintf("Entry can't become a string.\nExpected:\t%s\nGotten:   \t%s\n", expectedPayload, result))
     }
 
-    entry = LoadEntryFromString(result)
+    entry, err := LoadEntryFromString(result)
+
+    if err != nil {
+        t.Error(fmt.Sprintf("Wasn't able to load valid JSONL: %s\n", err))
+    }
+
     if entry.How != expectedHow {
         t.Error(fmt.Sprintf("Wrong description.\nExpected:\t%s\nGotten:\t\t%s\n", expectedHow, entry.How))
     }

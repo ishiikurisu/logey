@@ -1,6 +1,7 @@
 package logey
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -55,6 +56,33 @@ func (entry Entry) ToString() string {
 	)
 }
 
-func LoadEntryFromString(inlet string) Entry {
-	return NewEntry("nope", 0, []string{"tag"}, time.Now())
+func LoadEntryFromString(payload string) (Entry, error) {
+	var outlet Entry
+	var rawEntry []interface{}
+
+	oops := json.Unmarshal([]byte(payload), &rawEntry)
+	if oops != nil {
+		return outlet, oops
+	}
+
+	how := rawEntry[0].(string)
+
+	howMuch := rawEntry[1].(float64)
+
+	rawWhere := rawEntry[2].([]interface{})
+	where := make([]string, len(rawWhere))
+	for i, tag := range rawWhere {
+		where[i] = tag.(string)
+	}
+
+	var when time.Time
+	rawWhen := fmt.Sprintf("\"%s\"", rawEntry[3].(string))
+	oops = when.UnmarshalJSON([]byte(rawWhen))
+	if oops != nil {
+		return outlet, oops
+	}
+	when = when.In(time.UTC)
+
+	outlet = NewEntry(how, howMuch, where, when)
+	return outlet, nil
 }
