@@ -3,6 +3,7 @@ package logey
 import (
     "testing"
     "time"
+    "sort"
 )
 
 func TestLogeyCanConvertSimpleStringIntoEntries(t *testing.T) {
@@ -63,4 +64,48 @@ func TestLogeyCanLoadDates(t *testing.T) {
     if expecteDate.Day() != resultDate.Day() {
         t.Error("Loaded wrong day")
     }
+}
+
+func TestLogeyCanLoadTags(t *testing.T) {
+    testCase := "-€30 #nebenkosten Rasieren, bitte!"
+    expectedTags := []string{
+        "nebenkosten",
+    }
+    resultEntry, oops := Understand(testCase)
+    if oops != nil {
+        t.Error("Failed valid test case")
+    }
+    if !compareStringArrays(resultEntry.Where, expectedTags) {
+        t.Error("Loaded wrong tags")
+    }
+
+    testCase = "-$890 #fixkosten #miete Miete"
+    expectedTags = []string{
+        "miete",
+        "fixkosten",
+    }
+    resultEntry, oops = Understand(testCase)
+    if oops != nil {
+        t.Error("Failed valid test case")
+    }
+    if !compareStringArrays(resultEntry.Where, expectedTags) {
+        t.Error("Loaded wrong tags")
+    }
+}
+
+func compareStringArrays(a, b []string) bool {
+    if len(a) != len(b) {
+        return false
+    }
+
+    sort.Strings(a)
+    sort.Strings(b)
+    for i, x := range a {
+        y := b[i]
+        if x != y {
+            return false
+        }
+    }
+    
+    return true
 }
