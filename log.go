@@ -1,113 +1,67 @@
-/*
-This package implements the fundamental Logey structure: the log.
-*/
-
 package logey
 
-import "fmt"
-import "strings"
+import (
+	"fmt"
+	"strings"
+	"time"
+)
 
-// Defines the log data structure
+// This is the log, which will store and deal with entries
 type Log struct {
-    // Is an array of entry objects
-    Entries []Entry
+	// The list of entries
+	Entries []Entry
+
+	// The total balance, should be updated after each addition
+	Balance float64
 }
 
-func GetSeparator() string {
-    return "|"
+// Creates a new log
+func NewLog() *Log {
+	var log Log
+	log.Balance = 0
+	return &log
 }
 
-// Creates an empty log without entries
-func EmptyLog() Log {
-    return Log{Entries: make([]Entry, 0)}
+// Adds a new entry in the log
+func (log *Log) AddEntry(entry Entry) {
+	log.Entries = append(log.Entries, entry)
+	log.Balance += entry.HowMuch
 }
 
-// Starts the log with a first entry
-func NewLog(first Entry) Log {
-    log := Log{Entries: make([]Entry, 1)}
-    log.Entries[0] = first
-    return log
+// Adds a new entry in the log while describing the entry
+func (log *Log) DescribeEntry(how string, howMuch float64, where []string, when time.Time) {
+	entry := NewEntry(how, howMuch, where, when)
+	log.AddEntry(entry)
 }
 
-// Starts the log with a first entry, describing its description and its value
-func StartLog(description string, value float64) Log {
-    return NewLog(NewEntry(description, value))
+// Turns a log into a JSON lines table
+func (log Log) Export() string {
+	outlet := fmt.Sprintf("%s\n", GetEntryFormat())
+
+	for _, entry := range log.Entries {
+		outlet = fmt.Sprintf("%s%s\n", outlet, entry.ToString())
+	}
+
+	return outlet
 }
 
-// Adds an entry to a log
-func (log *Log) Insert(entry Entry) {
-    log.Entries = append(log.Entries, entry)
-}
+// Loads a log from a JSON lines table
+func Import(input string) *Log {
+	log := NewLog()
+	inlet := strings.Split(input, "\n")
+	firstLine := true
 
-// Adds an entry to a log
-func (log *Log) Add(description string, value float64) {
-    log.Insert(NewEntry(description, value))
-}
+	for _, line := range inlet {
+		if firstLine {
+			firstLine = false
+		} else if len(line) > 0 {
+			entry, oops := LoadEntryFromString(line)
+			if oops != nil {
+				panic(oops)
+			}
+			log.AddEntry(entry)
+		}
+	}
 
-// TODO: Change string standard for money log. I can't store a cookie like that.
-// Turns a log into a YAML string
-func (log *Log) ToString() string {
-    sep := GetSeparator()
-    outlet := "---" + sep
-
-    for _, entry := range log.Entries {
-        outlet += fmt.Sprintf("%s: %.2f", entry.Description, entry.Value) + sep
-    }
-
-    return fmt.Sprintf("%s...", outlet) + sep
-}
-
-// Loads a log from a YAML string
-func LogFromString(raw string) Log {
-    inlet := strings.Split(raw, GetSeparator())
-    log := EmptyLog()
-
-    if len(raw) == 0 {
-        return log
-    }
-
-    for _, field := range inlet {
-        if field == "---" || field == "..."  {
-
-        } else if len(field) > 0 {
-            log.Insert(EntryFromString(field))
-        }
-    }
-
-    return log
-}
-
-// Calculates the current log balance
-func (log *Log) CalculateBalance() float64 {
-    var outlet float64 = 0
-
-    for _, entry := range log.Entries {
-        outlet += entry.Value
-    }
-
-    return outlet
-}
-
-// Gets all descriptions
-func (log *Log) GetDescriptions() []string {
-    limit := len(log.Entries)
-    descriptions := make([]string, limit)
-
-    for i, entry := range log.Entries {
-        descriptions[i] = entry.Description
-    }
-
-    return descriptions
-}
-
-// Gets all values
-func (log *Log) GetValues() []float64 {
-    limit := len(log.Entries)
-    values := make([]float64, limit)
-
-    for i, entry := range log.Entries {
-        values[i] = entry.Value
-    }
-
-    return values
+	return log
 }

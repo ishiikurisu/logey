@@ -1,0 +1,7 @@
+---
+build:
+    local: false
+    commands:
+    - gofmt -w src/github.com/ishiikurisu/logey/entry.go
+    - gofmt -w src/github.com/ishiikurisu/logey/log.go
+    - go test github.com/ishiikurisu/logey
