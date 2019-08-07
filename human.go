@@ -9,10 +9,10 @@ import (
 )
 
 const (
-	MONEY_REGEX    = "(-?[$€円¥][0-9]*)"
+	MONEY_REGEX    = "-?[$€円¥][0-9]*"
 	CURRENCY_REGEX = "[$€円¥]"
 	DATE_REGEX     = "([0-9]{4}-0?[0-9]{1,2}-0?[0-9]{1,2})"
-	TAG_REGEX      = "(#\\w+)"
+	TAG_REGEX      = "#([^\\x00-\\x7F]|[\\w])+"
 )
 
 func Understand(human string) (Entry, error) {

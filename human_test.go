@@ -93,6 +93,45 @@ func TestLogeyCanLoadTags(t *testing.T) {
     }
 }
 
+func TestLogeyCanDealWithNonEnglishCharacters(t *testing.T) {
+    testCase := "-€60 #spaß #bücher Die Wanderhure"
+    expectedTags := []string{
+        "spaß",
+        "bücher",
+    }
+    resultEntry, oops := Understand(testCase)
+    if oops != nil {
+        t.Error("Failed valid test case")
+    }
+    if !compareStringArrays(resultEntry.Where, expectedTags) {
+        t.Error("Logey kannt kein Deusch sprechen")
+    }
+
+    testCase = "#alimentaçāo -$40 2019-07-21 Baiāo de Dois"
+    expectedTags = []string{
+        "alimentaçāo",
+    }
+    resultEntry, oops = Understand(testCase)
+    if oops != nil {
+        t.Error("Failed valid test case")
+    }
+    if !compareStringArrays(resultEntry.Where, expectedTags) {
+        t.Error("Logey nāo consegue falar Português")
+    }
+
+    testCase = "-円180000 #ゲーム スパーマリオ"
+    expectedTags = []string{
+        "ゲーム",
+    }
+    resultEntry, oops = Understand(testCase)
+    if oops != nil {
+        t.Error("Failed valid test case")
+    }
+    if !compareStringArrays(resultEntry.Where, expectedTags) {
+        t.Error("ロギーは日本語を話せない")
+    }
+}
+
 func compareStringArrays(a, b []string) bool {
     if len(a) != len(b) {
         return false
@@ -106,6 +145,6 @@ func compareStringArrays(a, b []string) bool {
             return false
         }
     }
-    
+
     return true
 }
